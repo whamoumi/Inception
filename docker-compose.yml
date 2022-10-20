@@ -1,0 +1,49 @@
+version: '3'
+
+services:
+    nginx:
+        build: ./src/nginx
+        container_name: nginx
+        volumes:
+            - wordpress_data:/wordpress
+        depends_on:
+            - wordpress
+            - mariadb
+        networks:
+            - inception_network
+        ports:
+            - 443:443
+    wordpress:
+        build: ./src/wordpress
+        container_name: wordpress
+        volumes:
+            - wordpress_data:/wordpress
+        depends_on:
+            - mariadb
+        networks:
+            - inception_network
+        environment:
+            - PASSWORD_MYSQL=pass
+            - DATABASE_MYSQL=db
+            - USER_MYSQL=user
+            - MYSQLHOST=mariadb
+            - WORDPRESS=lesite
+            - WORDPRESSPASSWORD=pass
+            - WORDPRESSLOGIN=wawaham
+    mariadb:
+        build: ./src/mariadb
+        container_name: mariadb
+        volumes:
+            - mariadb_data:/var/lib/mysql
+        networks:
+            - inception_network
+        environment:
+            - PASSWORD_MYSQL=pass
+            - DATABASE_MYSQL=db
+            - USER_MYSQL=user
+volumes:
+    wordpress_data:
+    mariadb_data:
+networks:
+    inception_network:
+    
